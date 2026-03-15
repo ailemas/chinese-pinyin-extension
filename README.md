@@ -1,13 +1,15 @@
 # Chinese Pinyin Extension
 
-A Chrome extension that adds blue pinyin above the Chinese text you select.
+A Chrome extension that adds pinyin or English translation help to the Chinese text you select.
 
 ## What it does
 
 - Select Chinese text on a page to show pinyin above just that selection.
+- Switch between `Off`, `Pinyin`, and `English` modes from the popup.
+- English mode currently uses a local mock translator so the UI is ready for a real API swap later.
 - Select a different section and the old annotation disappears before the new one appears.
-- Click elsewhere on the page or clear the selection to remove the current pinyin.
-- Turn the feature on or off from the popup.
+- Click elsewhere on the page or clear the selection to remove the current overlay.
+- Turn overlays off entirely from the popup when you do not want annotations.
 - Use the clear button to restore the page to normal.
 
 ## Run it
@@ -21,5 +23,5 @@ A Chrome extension that adds blue pinyin above the Chinese text you select.
 ## Files
 
 - `manifest.json`: Chrome extension config
-- `popup.html`, `popup.css`, `popup.js`: popup UI with toggle and clear button
-- `content.js`: selection handling, pinyin annotation, and page reset logic
+- `popup.html`, `popup.css`, `popup.js`: popup UI with mode switching and clear button
+- `content.js`: selection handling, pinyin rendering, mock English translation, and page reset logic
