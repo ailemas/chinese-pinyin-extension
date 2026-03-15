@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Pinyin Overlay",
+  "version": "1.0.0",
+  "description": "Show pinyin above the Chinese text you select, with quick toggle and clear controls.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "Pinyin Overlay",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["node_modules/pinyin-pro/dist/index.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
