@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blue Pinyin Overlay</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <p class="eyebrow">Chinese Reading Helper</p>
+      <h1>Blue Pinyin</h1>
+      <p class="description">
+        Select Chinese text on the page to show pinyin above it.
+      </p>
+
+      <label class="toggle-card" for="enabled-toggle">
+        <div>
+          <span class="toggle-label">Pinyin overlay</span>
+          <span class="toggle-help">Turn selection annotations on or off.</span>
+        </div>
+        <input id="enabled-toggle" type="checkbox" />
+        <span class="toggle-ui" aria-hidden="true"></span>
+      </label>
+
+      <button id="clear-button" class="clear-button" type="button">
+        Clear page
+      </button>
+
+      <p id="status" class="status" aria-live="polite"></p>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
