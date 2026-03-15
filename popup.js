@@ -1,8 +1,9 @@
-const STORAGE_KEY = "pinyinEnabled";
+const STORAGE_KEY = "selectionMode";
+const DEFAULT_MODE = "pinyin";
 
-const enabledToggle = document.getElementById("enabled-toggle");
 const clearButton = document.getElementById("clear-button");
 const status = document.getElementById("status");
+const modeInputs = Array.from(document.querySelectorAll('input[name="selection-mode"]'));
 
 async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -31,20 +32,48 @@ async function sendMessageToActiveTab(message) {
 }
 
 async function initializePopup() {
-  const { [STORAGE_KEY]: storedValue = true } = await chrome.storage.local.get(STORAGE_KEY);
-  enabledToggle.checked = storedValue;
-  setStatus(storedValue ? "Pinyin is on for new selections." : "Pinyin is off.");
+  const { [STORAGE_KEY]: storedValue = DEFAULT_MODE } = await chrome.storage.local.get(STORAGE_KEY);
+  const currentMode = normalizeMode(storedValue);
+  const currentInput = modeInputs.find((input) => input.value === currentMode);
+
+  if (currentInput) {
+    currentInput.checked = true;
+  }
+
+  setStatus(getModeStatus(currentMode));
 }
 
-enabledToggle.addEventListener("change", async () => {
-  const enabled = enabledToggle.checked;
-  await chrome.storage.local.set({ [STORAGE_KEY]: enabled });
-  const delivered = await sendMessageToActiveTab({ type: "SET_ENABLED", enabled });
+function normalizeMode(value) {
+  return ["off", "pinyin", "translation"].includes(value) ? value : DEFAULT_MODE;
+}
 
-  if (delivered) {
-    setStatus(enabled ? "Pinyin is on for new selections." : "Pinyin is off and the page was cleared.");
+function getModeStatus(mode) {
+  if (mode === "off") {
+    return "Overlays are off and the page stays clear.";
   }
-});
+
+  if (mode === "translation") {
+    return "English mode is on for new selections.";
+  }
+
+  return "Pinyin mode is on for new selections.";
+}
+
+for (const input of modeInputs) {
+  input.addEventListener("change", async () => {
+    if (!input.checked) {
+      return;
+    }
+
+    const mode = normalizeMode(input.value);
+    await chrome.storage.local.set({ [STORAGE_KEY]: mode });
+    const delivered = await sendMessageToActiveTab({ type: "SET_MODE", mode });
+
+    if (delivered) {
+      setStatus(getModeStatus(mode));
+    }
+  });
+}
 
 clearButton.addEventListener("click", async () => {
   const delivered = await sendMessageToActiveTab({ type: "CLEAR_ANNOTATIONS" });
