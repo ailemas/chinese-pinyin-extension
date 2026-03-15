@@ -51,18 +51,19 @@ h1 {
   line-height: 1.45;
 }
 
-.toggle-card {
-  position: relative;
+.mode-card {
   display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 12px;
+  gap: 14px;
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--card);
   box-shadow: var(--shadow);
-  cursor: pointer;
+}
+
+.mode-copy {
+  display: grid;
+  gap: 4px;
 }
 
 .toggle-label {
@@ -78,42 +79,47 @@ h1 {
   font-size: 12px;
 }
 
-input[type="checkbox"] {
+.mode-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mode-option {
+  position: relative;
+}
+
+.mode-option input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
 
-.toggle-ui {
-  position: relative;
-  width: 54px;
-  height: 30px;
-  border-radius: 999px;
-  background: rgba(31, 110, 235, 0.2);
-  transition: background 160ms ease;
-}
-
-.toggle-ui::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 6px 18px rgba(18, 48, 79, 0.18);
+.mode-option span {
+  display: block;
+  padding: 12px 10px;
+  border: 1px solid rgba(31, 110, 235, 0.15);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
   transition:
     transform 160ms ease,
-    background 160ms ease;
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
 }
 
-input[type="checkbox"]:checked + .toggle-ui {
-  background: var(--blue);
-}
-
-input[type="checkbox"]:checked + .toggle-ui::after {
-  transform: translateX(24px);
+.mode-option input:checked + span {
+  border-color: rgba(31, 110, 235, 0.45);
+  background: linear-gradient(135deg, rgba(31, 110, 235, 0.16), rgba(82, 166, 255, 0.2));
+  color: var(--blue-dark);
+  box-shadow: 0 10px 20px rgba(31, 110, 235, 0.14);
+  transform: translateY(-1px);
 }
 
 .clear-button {
