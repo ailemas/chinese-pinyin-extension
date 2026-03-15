@@ -3,25 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blue Pinyin Overlay</title>
+    <title>Pinyin Overlay</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <main class="popup">
       <p class="eyebrow">Chinese Reading Helper</p>
-      <h1>Blue Pinyin</h1>
+      <h1>Pinyin Overlay</h1>
       <p class="description">
-        Select Chinese text on the page to show pinyin above it.
+        Select Chinese text on the page to show pinyin or an English gloss.
       </p>
 
-      <label class="toggle-card" for="enabled-toggle">
-        <div>
-          <span class="toggle-label">Pinyin overlay</span>
-          <span class="toggle-help">Turn selection annotations on or off.</span>
+      <section class="mode-card" aria-labelledby="mode-heading">
+        <div class="mode-copy">
+          <span id="mode-heading" class="toggle-label">Selection mode</span>
+          <span class="toggle-help">Choose pinyin, English translation, or turn overlays off.</span>
         </div>
-        <input id="enabled-toggle" type="checkbox" />
-        <span class="toggle-ui" aria-hidden="true"></span>
-      </label>
+
+        <div class="mode-options" role="radiogroup" aria-labelledby="mode-heading">
+          <label class="mode-option">
+            <input type="radio" name="selection-mode" value="off" />
+            <span>Off</span>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="selection-mode" value="pinyin" />
+            <span>Pinyin</span>
+          </label>
+          <label class="mode-option">
+            <input type="radio" name="selection-mode" value="translation" />
+            <span>English</span>
+          </label>
+        </div>
+      </section>
 
       <button id="clear-button" class="clear-button" type="button">
         Clear page
