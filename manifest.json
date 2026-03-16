@@ -4,10 +4,17 @@
   "version": "1.0.0",
   "description": "Show pinyin above the Chinese text you select, with quick toggle and clear controls.",
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost:3000/*",
+    "https://*.vercel.app/*"
+  ],
   "action": {
     "default_title": "Pinyin Overlay",
     "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
