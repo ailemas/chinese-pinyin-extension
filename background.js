@@ -1,4 +1,4 @@
-const TRANSLATE_ENDPOINT = "chinese-pinyin-extension-e5ndqkzgi.vercel.app/api/translate";
+const TRANSLATE_ENDPOINT = "https://chinese-pinyin-extension-e5ndqkzgi.vercel.app/api/translate";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== "TRANSLATE_TEXT") {
