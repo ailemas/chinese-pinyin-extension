@@ -2,9 +2,10 @@
   "name": "chinese-pinyin-extension",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Chrome extension that shows pinyin above selected Chinese text.",
   "scripts": {
-    "check": "node -e \"JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')); JSON.parse(require('fs').readFileSync('vercel.json', 'utf8')); console.log('manifest and vercel config ok')\""
+    "check": "node -e \"JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')); console.log('manifest ok')\""
   },
   "dependencies": {
     "pinyin-pro": "^3.28.0"
