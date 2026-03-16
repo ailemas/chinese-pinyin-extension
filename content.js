@@ -22,6 +22,7 @@ hydrateState();
 
 document.addEventListener("mouseup", scheduleSelectionProcessing, true);
 document.addEventListener("keyup", scheduleSelectionProcessing, true);
+chrome.storage.onChanged.addListener(handleStorageChange);
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "SET_MODE") {
@@ -40,6 +41,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function hydrateState() {
   const stored = await chrome.storage.local.get(STORAGE_KEY);
   mode = normalizeMode(stored[STORAGE_KEY]);
+  clearAnnotations();
+}
+
+function handleStorageChange(changes, areaName) {
+  if (areaName !== "local" || !changes[STORAGE_KEY]) {
+    return;
+  }
+
+  mode = normalizeMode(changes[STORAGE_KEY].newValue);
   clearAnnotations();
 }
 
@@ -69,8 +79,8 @@ async function processSelection() {
   }
 
   if (mode === "translation") {
-    const currentRequest = ++requestSequence;
     clearAnnotations();
+    const currentRequest = ++requestSequence;
 
     const translation = await translator.translate(selectedText);
 
@@ -193,8 +203,6 @@ function annotateSegment(segment) {
 }
 
 function clearAnnotations() {
-  requestSequence += 1;
-
   for (const wrapper of activeWrappers) {
     if (!wrapper.isConnected) {
       continue;
@@ -243,75 +251,22 @@ function showTranslationOverlay(range, translation) {
 function createTranslator() {
   return {
     async translate(text) {
-      return mockTranslateChineseToEnglish(text);
+      try {
+        const response = await chrome.runtime.sendMessage({
+          type: "TRANSLATE_TEXT",
+          text
+        });
+
+        if (!response?.ok) {
+          throw new Error(response?.error || "Translation failed.");
+        }
+
+        return response.translation;
+      } catch (error) {
+        return `Translation unavailable: ${error.message}`;
+      }
     }
   };
-}
-
-function mockTranslateChineseToEnglish(text) {
-  const normalized = text.replace(/\s+/g, "");
-  const phraseDictionary = new Map([
-    ["你好", "hello"],
-    ["谢谢", "thank you"],
-    ["再见", "goodbye"],
-    ["对不起", "sorry"],
-    ["没关系", "it's okay"],
-    ["我爱你", "I love you"],
-    ["中国", "China"],
-    ["美国", "United States"],
-    ["老师", "teacher"],
-    ["学生", "student"],
-    ["今天", "today"],
-    ["明天", "tomorrow"],
-    ["昨天", "yesterday"],
-    ["吃饭", "eat a meal"],
-    ["喝水", "drink water"]
-  ]);
-
-  if (phraseDictionary.has(normalized)) {
-    return phraseDictionary.get(normalized);
-  }
-
-  const characterDictionary = new Map([
-    ["我", "I / me"],
-    ["你", "you"],
-    ["他", "he / him"],
-    ["她", "she / her"],
-    ["们", "plural marker"],
-    ["是", "to be"],
-    ["的", "possessive particle"],
-    ["不", "not"],
-    ["在", "at / in"],
-    ["有", "have / there is"],
-    ["人", "person"],
-    ["中", "middle / China"],
-    ["国", "country"],
-    ["学", "study"],
-    ["生", "student / life"],
-    ["老", "old"],
-    ["师", "teacher"],
-    ["天", "day / sky"],
-    ["气", "air / weather"],
-    ["好", "good"],
-    ["吃", "eat"],
-    ["喝", "drink"],
-    ["水", "water"],
-    ["看", "look / watch"],
-    ["书", "book"],
-    ["猫", "cat"],
-    ["狗", "dog"]
-  ]);
-
-  const glosses = Array.from(normalized)
-    .filter((character) => CHINESE_CHAR_PATTERN.test(character))
-    .map((character) => characterDictionary.get(character))
-    .filter(Boolean);
-
-  if (glosses.length > 0) {
-    return glosses.join(" | ");
-  }
-
-  return `Mock translation preview for "${text}". Swap the translator adapter in content.js for a real API later.`;
 }
 
 function escapeHtml(text) {
